@@ -1,0 +1,155 @@
+version: 2
+
+# Project metadata
+project_name: terraform-provider-devgraph
+
+# Hooks to run before building
+before:
+  hooks:
+    - go mod tidy
+    - go mod verify
+    - go test -short ./...
+
+# Build configuration
+builds:
+  - id: terraform-provider-devgraph
+    main: .
+    env:
+      - CGO_ENABLED=0
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath
+      - -v
+    ldflags:
+      - '-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}'
+    goos:
+      - freebsd
+      - windows
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - '386'
+      - arm
+      - arm64
+    ignore:
+      - goos: darwin
+        goarch: '386'
+      - goos: darwin
+        goarch: arm
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+    binary: '{{ .ProjectName }}_v{{ .Version }}'
+
+# Archive configuration
+archives:
+  - id: terraform-provider-devgraph
+    format: zip
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    files:
+      - LICENSE
+      - README.md
+      - CONTRIBUTING.md
+      - docs/**/*
+
+# Checksum configuration
+checksum:
+  name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+  algorithm: sha256
+
+# GPG signing configuration
+signs:
+  - artifacts: checksum
+    args:
+      - "--batch"
+      - "--local-user"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+
+# GitHub release configuration
+release:
+  draft: false
+  prerelease: auto
+  mode: replace
+  header: |
+    ## Terraform Provider DevGraph {{ .Version }}
+
+    This release includes the following changes:
+  footer: |
+    ## Installation
+
+    ### Terraform Registry (Recommended)
+    ```hcl
+    terraform {
+      required_providers {
+        devgraph = {
+          source  = "arctir/devgraph"
+          version = "~> {{ .Version }}"
+        }
+      }
+    }
+    ```
+
+    ### Manual Installation
+    1. Download the appropriate binary for your platform
+    2. Verify the checksum: `sha256sum -c {{ .ProjectName }}_{{ .Version }}_SHA256SUMS`
+    3. Verify the GPG signature: `gpg --verify {{ .ProjectName }}_{{ .Version }}_SHA256SUMS.sig {{ .ProjectName }}_{{ .Version }}_SHA256SUMS`
+    4. Extract and install to your Terraform plugins directory
+
+    **Full Changelog**: https://github.com/arctir/{{ .ProjectName }}/compare/{{ .PreviousTag }}...{{ .Tag }}
+  name_template: "v{{ .Version }}"
+  make_latest: true
+
+# Changelog configuration (conventional commits)
+changelog:
+  sort: asc
+  use: github
+  abbrev: 7
+  filters:
+    exclude:
+      - '^docs(\(.*\))?:'
+      - '^test(\(.*\))?:'
+      - '^chore(\(.*\))?:'
+      - '^ci(\(.*\))?:'
+      - '^style(\(.*\))?:'
+      - 'README'
+      - 'typo'
+      - 'Merge pull request'
+      - 'Merge branch'
+  groups:
+    - title: '🚀 New Features'
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: '🐛 Bug Fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: '⚡ Performance Improvements'
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: '♻️ Refactoring'
+      regexp: '^.*?refactor(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: '📦 Build'
+      regexp: '^.*?build(\([[:word:]]+\))??!?:.+$'
+      order: 4
+    - title: '⚠️ Breaking Changes'
+      regexp: '^.*?!:.+$'
+      order: 5
+    - title: '🔧 Other Changes'
+      order: 999
+
+# Snapshot configuration for non-tagged builds
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+# Metadata for dist directory
+dist: dist
+
+# Announce (future enhancement - can add Discord, Slack, etc.)
+# announce:
+#   skip: '{{ .Env.SKIP_ANNOUNCE }}'

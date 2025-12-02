@@ -1,0 +1,30 @@
+# golangci-lint configuration
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - bodyclose
+    - errname
+    - errorlint
+    - gocyclo
+    - goprintffuncname
+    - nilerr
+    - predeclared
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+
+  gocyclo:
+    min-complexity: 35
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

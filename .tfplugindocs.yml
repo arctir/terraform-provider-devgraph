@@ -1,0 +1,13 @@
+provider_name: devgraph
+rendered_provider_name: Devgraph
+rendered_website_dir: docs
+
+# Override resource/data source names for better organization
+resource_schema_names:
+  devgraph_discovery_provider: discovery_provider
+  devgraph_chat_suggestion: chat_suggestion
+  devgraph_environment: environment
+  devgraph_mcp_endpoint: mcp_endpoint
+  devgraph_model_provider: model_provider
+  devgraph_model: model
+  devgraph_oauth_service: oauth_service

@@ -1,0 +1,36 @@
+# Typos configuration for spell checking
+# See: https://github.com/crate-ci/typos
+
+[default]
+extend-ignore-re = [
+  # Ignore URLs
+  "https?://[^\\s]+",
+  # Ignore hex values
+  "0x[0-9a-fA-F]+",
+  # Ignore base64 strings
+  "[A-Za-z0-9+/]{20,}={0,2}",
+]
+
+[default.extend-words]
+# Custom dictionary for project-specific terms
+devgraph = "devgraph"
+arctir = "arctir"
+tfplugindocs = "tfplugindocs"
+goreleaser = "goreleaser"
+oauth = "oauth"
+mcp = "mcp"
+hcl = "hcl"
+Hashi = "Hashi"
+HashiCorp = "HashiCorp"
+hashicorp = "hashicorp"
+
+[files]
+extend-exclude = [
+  "go.sum",
+  "*.lock",
+  "vendor/",
+  "dist/",
+  ".git/",
+  "coverage.out",
+  "*.pb.go",
+]

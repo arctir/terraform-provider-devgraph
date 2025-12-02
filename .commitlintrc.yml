@@ -1,0 +1,50 @@
+# Commitlint configuration for conventional commits
+# See: https://commitlint.js.org/
+
+rules:
+  # Body and footer rules
+  body-leading-blank: [2, always]
+  body-max-line-length: [2, always, 100]
+  footer-leading-blank: [2, always]
+  footer-max-line-length: [2, always, 100]
+
+  # Header rules
+  header-max-length: [2, always, 100]
+  header-trim: [2, always]
+
+  # Subject rules
+  subject-case: [2, never, [sentence-case, start-case, pascal-case, upper-case]]
+  subject-empty: [2, never]
+  subject-full-stop: [2, never, '.']
+
+  # Type rules
+  type-case: [2, always, lower-case]
+  type-empty: [2, never]
+  type-enum:
+    - 2
+    - always
+    - - feat       # New feature
+      - fix        # Bug fix
+      - docs       # Documentation only changes
+      - style      # Changes that don't affect code meaning (whitespace, formatting)
+      - refactor   # Code change that neither fixes a bug nor adds a feature
+      - perf       # Performance improvements
+      - test       # Adding missing tests or correcting existing tests
+      - build      # Changes to build system or external dependencies
+      - ci         # Changes to CI configuration files and scripts
+      - chore      # Other changes that don't modify src or test files
+      - revert     # Reverts a previous commit
+
+  # Scope rules (optional but recommended)
+  scope-case: [2, always, lower-case]
+
+  # Breaking changes
+  # Use "!" after type/scope or "BREAKING CHANGE:" in footer
+
+# Example valid commit messages:
+# feat: add support for discovery providers
+# fix(oauth): correct token refresh logic
+# feat!: remove deprecated model resource fields
+# docs: update README with pre-commit setup
+# ci: add conventional commits validation
+# chore(deps): update terraform-plugin-framework to v1.16.1
